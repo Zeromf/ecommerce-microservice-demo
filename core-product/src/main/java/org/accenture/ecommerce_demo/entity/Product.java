@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +16,6 @@ import java.util.UUID;
 @Table(name = "Product")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID productId;
     @Column(name = "name")
     private String name;
@@ -29,10 +29,10 @@ public class Product {
     private int discount;
     @Column(name = "imageUrl")
     private String imageUrl;
-//    @ManyToOne
-//    @JoinColumn(name = "category_id")
-//    private Category categoryName;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category categoryName;
 
-//    @OneToMany(mappedBy = "product")
-//    private List<SaleProduct> saleProducts;
+    @OneToMany(mappedBy = "product")
+    private List<SaleProduct> saleProducts;
 }

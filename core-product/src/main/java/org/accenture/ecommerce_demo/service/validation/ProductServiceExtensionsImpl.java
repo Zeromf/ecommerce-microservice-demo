@@ -1,7 +1,9 @@
 package org.accenture.ecommerce_demo.service.validation;
 
+import org.accenture.ecommerce_demo.entity.Product;
 import org.accenture.ecommerce_demo.exception.BadRequestException;
 import org.accenture.ecommerce_demo.exception.ProductAlreadyExistsException;
+import org.accenture.ecommerce_demo.exception.ProductNotFoundException;
 import org.accenture.ecommerce_demo.model.ProductRequest;
 import org.accenture.ecommerce_demo.repository.IProductRepository;
 import org.accenture.ecommerce_demo.repository.command.IProductCommand;
@@ -9,17 +11,15 @@ import org.accenture.ecommerce_demo.repository.query.IProductQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProductServiceExtensionsImpl implements IProductServiceExtensions{
 
     @Autowired
     private IProductRepository productRepository;
-//    @Autowired
-//    private IProductQuery productQuery;
+    @Autowired
+    private IProductQuery productQuery;
     @Override
     public void ValidateProductRequest(ProductRequest request) throws BadRequestException {
         List<String> errorMessages = new ArrayList<>();
@@ -49,17 +49,31 @@ public class ProductServiceExtensionsImpl implements IProductServiceExtensions{
     }
 
     @Override
-    public void validateProductExist(UUID productId) {
+    public void ValidateNameUpdate(UUID id, ProductRequest request) {
+        Product product=productQuery.getProductById(id);
+        if (!Objects.equals(product.getName(), request.getName()) && productQuery.productExistsByName(request.getName()))
+        {
+            throw new ProductNotFoundException(id);
+        }
 
     }
 
     @Override
+    public void validateProductExist(UUID productId) {
+        Product queryProduct=productQuery.getProductById(productId);
+        if (queryProduct==null)
+        {
+            throw new ProductNotFoundException(productId);
+        }
+    }
+
+    @Override
     public void validateProductHasSaleHistory(UUID productId) throws BadRequestException {
-        // Lógica para verificar si el producto tiene historial de ventas
-//        boolean hasSalesHistory = productQuery.hasSaleHistory(productId);
-//        if (hasSalesHistory) {
-//            throw new BadRequestException("El producto tiene historial de ventas y no se puede eliminar.");
-//        }
+        //verifica si el producto tiene historial de ventas
+        Product queryProduct= productQuery.getProductById(productId);
+        if (!queryProduct.getSaleProducts().isEmpty()) {
+            throw new BadRequestException("El producto tiene historial de ventas y no se puede eliminar.");
+        }
 
     }
 }

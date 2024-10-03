@@ -8,9 +8,11 @@ import org.accenture.ecommerce_demo.exception.ProductNotFoundException;
 import org.accenture.ecommerce_demo.model.ProductRequest;
 import org.accenture.ecommerce_demo.model.ProductResponse;
 import org.accenture.ecommerce_demo.repository.command.IProductCommand;
+import org.accenture.ecommerce_demo.repository.query.IProductQuery;
 import org.accenture.ecommerce_demo.service.validation.IProductServiceExtensions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.events.Event;
 
 import java.util.UUID;
 
@@ -22,11 +24,13 @@ public class ProductServiceImpl implements IProductService{
     private IProductCommand productCommand;
     @Autowired
     private IProductServiceExtensions productServiceExtensions;
+    @Autowired
+    private IProductQuery productQuery;
+
     public ProductResponse createProduct(ProductRequest request) throws ProductAlreadyExistsException, BadRequestException {
         productServiceExtensions.ValidateProductDoesNotExistByName(request);
         productServiceExtensions.ValidateProductRequest(request);
 
-        // Crear el producto
         Product product = new Product();
         product.setProductId(UUID.randomUUID());
         product.setName(request.getName());
@@ -35,11 +39,8 @@ public class ProductServiceImpl implements IProductService{
         product.setCategory(request.getCategory());
         product.setDiscount(request.getDiscount());
         product.setImageUrl(request.getImageUrl());
-
-        // Agregar el producto
         productCommand.addProduct(product);
 
-        // Construir y devolver la respuesta
         return buildProductResponse(product);
     }
 
@@ -63,35 +64,39 @@ public class ProductServiceImpl implements IProductService{
 
     @Override
     public ProductResponse getProductById(UUID id) {
-        return null;
+        productServiceExtensions.validateProductExist(id);
+        Product product = productQuery.getProductById(id);
+        return buildProductResponse(product);
     }
 
     @Override
     public ProductResponse updateProduct(UUID id, ProductRequest request) {
-        return null;
+        productServiceExtensions.validateProductExist(id);
+        productServiceExtensions.ValidateProductRequest(request);
+        productServiceExtensions.ValidateNameUpdate(id,request);
+
+        Product product = productQuery.getProductById(id);
+
+        // Asignar los valores del ProductRequest al producto
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setDiscount(request.getDiscount());
+        product.setImageUrl(request.getImageUrl());
+        product.setCategory(request.getCategory());
+
+        productCommand.updateProduct(product);
+
+        return buildProductResponse(product);
     }
 
-    @Override
-    public ProductResponse deleteProduct(UUID id) {
-        return null;
-    }
+    public ProductResponse deleteProduct(UUID productId) throws ProductNotFoundException, BadRequestException {
+        productServiceExtensions.validateProductExist(productId);
+        productServiceExtensions.validateProductHasSaleHistory(productId);
 
-//    public ProductResponse deleteProduct(UUID productId) throws ProductNotFoundException, BadRequestException {
-//        // Validar que el producto exista
-//        productServiceExtensions.validateProductExist(productId);
-//
-//        // Validar si el producto tiene historial de ventas
-//        productServiceExtensions.validateProductHasSaleHistory(productId);
-//
-//        // Obtener el producto por ID
-////        Product product = productQuery.getProductById(productId)
-////                .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado con el ID: " + productId));
-////
-////        // Eliminar el producto
-////        productCommand.deleteProduct(product);
-////
-////        // Construir y devolver la respuesta
-////        return buildProductResponse(product);
-//        return null;
-//    }
+        Product product = productQuery.getProductById(productId);
+        productCommand.deleteProduct(product);
+
+        return buildProductResponse(product);
+    }
 }

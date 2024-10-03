@@ -1,7 +1,9 @@
 package org.accenture.ecommerce_demo.exception;
 
+import java.util.UUID;
+
 public class ProductNotFoundException extends RuntimeException {
-    public ProductNotFoundException(String message) {
-        super(message);
+    public ProductNotFoundException(UUID message) {
+        super(String.valueOf(message));
     }
 }

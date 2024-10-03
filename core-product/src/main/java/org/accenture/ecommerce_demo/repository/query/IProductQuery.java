@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IProductQuery {
-    Optional<Product> getProductById(UUID productId);
+    Product getProductById(UUID productId);
     List<Product> getProductsByCategory(String categoryName);
+    boolean productExistsByName(String name);
+
 }

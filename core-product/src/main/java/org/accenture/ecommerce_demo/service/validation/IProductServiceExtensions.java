@@ -7,7 +7,8 @@ import java.util.UUID;
 public interface IProductServiceExtensions {
    void ValidateProductRequest(ProductRequest request);
    void ValidateProductDoesNotExistByName(ProductRequest request);
-   
+   void ValidateNameUpdate(UUID id, ProductRequest request);
+
    void validateProductExist(UUID productId);
 
    void validateProductHasSaleHistory(UUID productId);

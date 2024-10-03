@@ -43,15 +43,9 @@ public class ProductController {
             @ApiResponse(responseCode = "404", description = "Producto no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<?> getProductDetails(@PathVariable UUID id) {
-        try {
             ProductResponse productDetails = productService.getProductById(id);
             return ResponseEntity.ok(productDetails);
-        } catch (ProductNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(ex.getMessage()));
-        }
     }
-
-
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualiza un producto existente", description = "Permite la actualización de los detalles de un producto específico.")
@@ -62,16 +56,8 @@ public class ProductController {
             @ApiResponse(responseCode = "409", description = "Conflicto al actualizar el producto.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<?> updateProduct(@PathVariable UUID id, @RequestBody ProductRequest request) {
-        try {
             ProductResponse updatedProduct = productService.updateProduct(id, request);
             return ResponseEntity.ok(updatedProduct);
-        } catch (BadRequestException ex) {
-            return ResponseEntity.badRequest().body(new ApiError(ex.getMessage()));
-        } catch (ProductNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(ex.getMessage()));
-        } catch (ProductAlreadyExistsException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiError(ex.getMessage()));
-        }
     }
 
     @DeleteMapping("/{id}")
@@ -82,14 +68,8 @@ public class ProductController {
             @ApiResponse(responseCode = "409", description = "Conflicto: el producto tiene historial de ventas", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class)))
     })
     public ResponseEntity<?> deleteProduct(@PathVariable UUID id) {
-        try {
             ProductResponse response = productService.deleteProduct(id);
             return ResponseEntity.ok(response);
-        } catch (ProductNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(ex.getMessage()));
-        } catch (ProductHasSalesHistoryException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiError(ex.getMessage()));
-        }
     }
 
 }

@@ -27,7 +27,11 @@ public class ProductCommand implements IProductCommand {
     }
     @Override
     public void updateProduct(Product product) {
-        context.getEntityManager().merge(product);
+        if (product.getProductId() != null) {
+            context.getEntityManager().merge(product);
+        } else {
+            context.getEntityManager().persist(product);
+        }
     }
 
     @Override
