@@ -5,6 +5,7 @@ import org.accenture.ecommerce_demo.entity.Product;
 import org.accenture.ecommerce_demo.exception.BadRequestException;
 import org.accenture.ecommerce_demo.exception.ProductAlreadyExistsException;
 import org.accenture.ecommerce_demo.exception.ProductNotFoundException;
+import org.accenture.ecommerce_demo.model.ProductCategory;
 import org.accenture.ecommerce_demo.model.ProductRequest;
 import org.accenture.ecommerce_demo.model.ProductResponse;
 import org.accenture.ecommerce_demo.repository.command.IProductCommand;
@@ -26,7 +27,8 @@ public class ProductServiceImpl implements IProductService{
     private IProductServiceExtensions productServiceExtensions;
     @Autowired
     private IProductQuery productQuery;
-
+    @Autowired
+    private ICategoryService categoryService;
     public ProductResponse createProduct(ProductRequest request) throws ProductAlreadyExistsException, BadRequestException {
         productServiceExtensions.ValidateProductDoesNotExistByName(request);
         productServiceExtensions.ValidateProductRequest(request);
@@ -54,8 +56,8 @@ public class ProductServiceImpl implements IProductService{
         productResponse.setImageUrl(product.getImageUrl());
 
 //        // Obtener la categoría del producto y asignarla a la respuesta
-//        String category = categoryService.getProductCategory(product.getCategory());
-//        productResponse.setCategory(category);
+        ProductCategory category = categoryService.getProductCategory(product.getCategory());
+        productResponse.setCategory(category);
 
         return productResponse;
     }

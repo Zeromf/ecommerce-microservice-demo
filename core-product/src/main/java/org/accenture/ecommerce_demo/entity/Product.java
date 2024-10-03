@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,4 +36,15 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<SaleProduct> saleProducts;
+
+    // Constructor sin ID (si quieres)
+    public Product(String name, String description, Double price, Integer category, Integer discount, String imageUrl) {
+        this.productId = UUID.randomUUID();  // Generar UUID manualmente
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.discount = discount;
+        this.imageUrl = imageUrl;
+    }
 }

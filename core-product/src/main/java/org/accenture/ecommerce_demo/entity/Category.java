@@ -14,11 +14,17 @@ import java.util.List;
 @Table(name = "Category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int categoryId;
-    @Column(name = "name")
+
+    @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
+
+    public Category(int categoryId, String name) {
+        this.categoryId = categoryId;
+        this.name = name;
+    }
 }

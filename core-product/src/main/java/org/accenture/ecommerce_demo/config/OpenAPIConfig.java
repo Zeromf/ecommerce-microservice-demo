@@ -1,13 +1,17 @@
 package org.accenture.ecommerce_demo.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.List;
@@ -22,14 +26,15 @@ public class OpenAPIConfig {
     private String prodUrl;
 
     @Bean
+    @Primary
     public OpenAPI myOpenAPI() {
         Server devServer = new Server();
         devServer.setUrl(devUrl);
-        devServer.setDescription("Server in Desarrollo");
+        devServer.setDescription("Server en Desarrollo");
 
         Server prodServer = new Server();
         prodServer.setUrl(prodUrl);
-        prodServer.setDescription("Server in Produccion");
+        prodServer.setDescription("Server en Producción");
 
         Contact contact = new Contact();
         contact.setEmail("ferreyraenzo26@hotmail.com");
@@ -42,9 +47,17 @@ public class OpenAPIConfig {
                 .title("Producto Customer API")
                 .version("1.0")
                 .contact(contact)
-                .description("This API exposes endpoints to manage Product.").termsOfService("https://www.products.com/produ")
+                .description("This API exposes endpoints to manage Products.")
+                .termsOfService("https://www.products.com/produ")
                 .license(mitLicense);
 
-        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
+        return new OpenAPI()
+                .info(info)
+                .servers(List.of(devServer, prodServer))
+                .addSecurityItem(new SecurityRequirement().addList("basicAuth"))  // Asociar la seguridad a las rutas
+                .components(new Components()
+                        .addSecuritySchemes("basicAuth",
+                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")));
     }
+
 }

@@ -6,8 +6,8 @@ import org.accenture.ecommerce_demo.exception.ProductAlreadyExistsException;
 import org.accenture.ecommerce_demo.exception.ProductNotFoundException;
 import org.accenture.ecommerce_demo.model.ProductRequest;
 import org.accenture.ecommerce_demo.repository.IProductRepository;
-import org.accenture.ecommerce_demo.repository.command.IProductCommand;
 import org.accenture.ecommerce_demo.repository.query.IProductQuery;
+import org.accenture.ecommerce_demo.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +20,8 @@ public class ProductServiceExtensionsImpl implements IProductServiceExtensions{
     private IProductRepository productRepository;
     @Autowired
     private IProductQuery productQuery;
+    @Autowired
+    private ICategoryService categoryService;
     @Override
     public void ValidateProductRequest(ProductRequest request) throws BadRequestException {
         List<String> errorMessages = new ArrayList<>();
@@ -32,9 +34,9 @@ public class ProductServiceExtensionsImpl implements IProductServiceExtensions{
             errorMessages.add("El descuento debe estar entre 0% y 100%.");
         }
 
-//        if (!categoryService.categoryExists(request.getCategory())) {
-//            errorMessages.add("La categoría '" + request.getCategory() + "' no existe.");
-//        }
+        if (!categoryService.categoryExists(request.getCategory())) {
+            errorMessages.add("La categoría '" + request.getCategory() + "' no existe.");
+        }
 
         if (!errorMessages.isEmpty()) {
             throw new BadRequestException(String.join(" ", errorMessages));
