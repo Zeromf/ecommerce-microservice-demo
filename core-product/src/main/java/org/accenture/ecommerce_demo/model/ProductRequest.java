@@ -1,6 +1,9 @@
 package org.accenture.ecommerce_demo.model;
 
 import lombok.Data;
+import org.accenture.ecommerce_demo.entity.SaleProduct;
+
+import java.util.UUID;
 
 @Data
 public class ProductRequest {
@@ -10,4 +13,5 @@ public class ProductRequest {
     private int discount;
     private String imageUrl;
     private int category;
+    private int saleProductId;
 }

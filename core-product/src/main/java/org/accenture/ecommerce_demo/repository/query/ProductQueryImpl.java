@@ -12,9 +12,6 @@ import java.util.UUID;
 @Repository
 public class ProductQueryImpl implements IProductQuery{
 
-//    @PersistenceContext
-//    private EntityManager entityManager;
-
     private final IProductRepository productRepository;
 
     public ProductQueryImpl(IProductRepository productRepository) {
@@ -25,10 +22,6 @@ public class ProductQueryImpl implements IProductQuery{
     @Transactional(readOnly = true)
     public Product getProductById(UUID id) {
         return productRepository.findByIdWithDetails(id);
-    }
-    @Override
-    public List<Product> getProductsByCategory(String categoryName) {
-        return null;
     }
     @Override
     public boolean productExistsByName(String name) {

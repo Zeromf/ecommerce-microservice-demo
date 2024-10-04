@@ -18,10 +18,8 @@ public class ProductCommand implements IProductCommand {
     @Override
     public void addProduct(Product product) {
         if (product.getProductId() != null) {
-            // Usar merge para actualizar una entidad existente (detached)
             context.getEntityManager().merge(product);
         } else {
-            // Usar persist para una nueva entidad
             context.getEntityManager().persist(product);
         }
     }

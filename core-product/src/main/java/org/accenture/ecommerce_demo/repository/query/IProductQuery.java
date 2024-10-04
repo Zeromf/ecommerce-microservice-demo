@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public interface IProductQuery {
     Product getProductById(UUID productId);
-    List<Product> getProductsByCategory(String categoryName);
     boolean productExistsByName(String name);
 
 }

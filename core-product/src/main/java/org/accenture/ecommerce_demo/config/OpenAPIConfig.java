@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.List;
 
@@ -54,10 +53,12 @@ public class OpenAPIConfig {
         return new OpenAPI()
                 .info(info)
                 .servers(List.of(devServer, prodServer))
-                .addSecurityItem(new SecurityRequirement().addList("basicAuth"))  // Asociar la seguridad a las rutas
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
-                        .addSecuritySchemes("basicAuth",
-                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")));
+                        .addSecuritySchemes("bearerAuth",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")));
     }
-
 }

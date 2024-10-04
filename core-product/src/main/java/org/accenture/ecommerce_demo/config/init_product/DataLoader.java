@@ -1,4 +1,4 @@
-package org.accenture.ecommerce_demo.config;
+package org.accenture.ecommerce_demo.config.init_product;
 
 import org.accenture.ecommerce_demo.entity.Category;
 import org.accenture.ecommerce_demo.entity.Product;

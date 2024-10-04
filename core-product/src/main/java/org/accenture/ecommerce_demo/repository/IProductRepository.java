@@ -10,10 +10,6 @@ import java.util.UUID;
 
 public interface IProductRepository extends JpaRepository<Product, Long> {
 
-    // Consulta para incluir la relación con Category y SaleProducts
-    @Query("SELECT p FROM Product p JOIN FETCH p.categoryName")
-    List<Product> findAllWithCategory();
-
     @Query("SELECT p FROM Product p LEFT JOIN FETCH p.categoryName LEFT JOIN FETCH p.saleProducts WHERE p.productId = :id")
     Product findByIdWithDetails(UUID id);
     boolean existsByName(String name);
